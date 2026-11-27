@@ -1,0 +1,152 @@
+name: Release
+# Runs only when someone pushes a version tag such as v1.2.3. Nothing else starts it.
+# It checks the catalog and tests each published layout, then builds one image per layout on a
+# native amd64 and arm64 runner (no QEMU), pushes one tag per platform, and joins them into
+# multi-platform tags: 1.2.3, 1.2, 1 and latest. A prerelease tag such as v1.3.0-rc.1 gets only
+# its own tag. 1.2, 1 and latest move only when this is the highest release in that line.
+# Last, it creates the GitHub Release.
+#
+# The Art Frames install file (install/docker-compose.yml in art-frames) runs these images:
+# ghcr.io/brianmuse/art-frames-layout-<id>. To publish another layout, add its ID to both
+# matrix lists below and add its services to that install file.
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  REGISTRY: ghcr.io/brianmuse
+jobs:
+  version:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
+      tags: ${{ steps.tag.outputs.tags }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # every tag, to find the highest release
+      - id: tag
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version=${TAG#v}
+          # The highest vX.Y.Z tag that starts with $1 (for example "v1.2." or "v").
+          highest() {
+            git tag -l "$1*" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1
+          }
+          if echo "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            minor=${version%.*}
+            major=${version%%.*}
+            tags="$version"
+            if test "$(highest "v$minor.")" = "$TAG"; then tags="$tags $minor"; fi
+            if test "$(highest "v$major.")" = "$TAG"; then tags="$tags $major"; fi
+            if test "$(highest "v")" = "$TAG"; then tags="$tags latest"; fi
+          elif echo "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+-[0-9A-Za-z.]+$'; then
+            tags="$version"
+          else
+            echo "The tag $TAG is not vX.Y.Z or vX.Y.Z-label" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tags=$tags" >> "$GITHUB_OUTPUT"
+
+  test:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: true
+      matrix:
+        layout: [morning, news, weather]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm run validate
+      - run: npm run test:scripts
+      - run: npm --prefix "layouts/${{ matrix.layout }}" ci
+      - run: npm --prefix "layouts/${{ matrix.layout }}" test
+
+  build:
+    needs: [version, test]
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: true
+      matrix:
+        layout: [morning, news, weather]
+        platform:
+          - {name: linux/amd64, arch: amd64, runner: ubuntu-24.04}
+          - {name: linux/arm64, arch: arm64, runner: ubuntu-24.04-arm}
+    runs-on: ${{ matrix.platform.runner }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        with:
+          context: layouts/${{ matrix.layout }}
+          platforms: ${{ matrix.platform.name }}
+          labels: |
+            org.opencontainers.image.version=${{ needs.version.outputs.version }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          provenance: false
+          push: true
+          tags: ${{ env.REGISTRY }}/art-frames-layout-${{ matrix.layout }}:${{ needs.version.outputs.version }}-${{ matrix.platform.arch }}
+
+  publish:
+    needs: [version, build]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        layout: [morning, news, weather]
+    steps:
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Join the platform images under each tag
+        env:
+          IMAGE: ${{ env.REGISTRY }}/art-frames-layout-${{ matrix.layout }}
+          VERSION: ${{ needs.version.outputs.version }}
+          TAGS: ${{ needs.version.outputs.tags }}
+        run: |
+          set -eu
+          args=""
+          for tag in $TAGS; do args="$args -t $IMAGE:$tag"; done
+          # shellcheck disable=SC2086
+          docker buildx imagetools create $args "$IMAGE:$VERSION-amd64" "$IMAGE:$VERSION-arm64"
+          docker buildx imagetools inspect "$IMAGE:$VERSION"
+
+  release:
+    needs: [version, publish]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          VERSION: ${{ needs.version.outputs.version }}
+        run: |
+          set -eu
+          flags=""
+          if echo "$VERSION" | grep -q -- '-'; then flags="--prerelease"; fi
+          # shellcheck disable=SC2086
+          gh release create "$TAG" --verify-tag --generate-notes --title "Art Frames layouts $VERSION" $flags

@@ -13,7 +13,7 @@ The layouts:
 
 To install the layouts on your TV, set up Art Frames first. Art Frames builds and runs the layouts in this repository for you. See [Install](#install) and the host guide [docs/layouts.md](https://github.com/brianmuse/art-frames/blob/main/docs/layouts.md).
 
-For now, these layouts need a [source install of Art Frames](https://github.com/brianmuse/art-frames/blob/main/docs/cli-deployment.md). The install file runs only the starter website.
+The Art Frames install file runs `morning`, `news` and `weather` from the images that this repository publishes. `photos` and your own layouts need a [source install of Art Frames](https://github.com/brianmuse/art-frames/blob/main/docs/cli-deployment.md).
 
 To work on one layout on your computer, you need Node.js 22.23.4 or later:
 
@@ -362,6 +362,14 @@ npm run dev
 Open `http://127.0.0.1:4321/?preview=landscape`. The dev preview uses generated sample images and no network. Options: `preview=landscape|portrait|error|empty|missing`, `fit=cover|contain`, `caption=0` and `clock=1`. Without `preview`, the dev server uses `.secrets/config.json` and stores its cache in `.secrets/state`. Never commit album links or photos.
 
 ## Install
+
+### With the Art Frames install file
+
+The [Art Frames install file](https://github.com/brianmuse/art-frames/blob/main/install/docker-compose.yml) already runs `morning`, `news` and `weather`. You install nothing here. Set each layout's city or calendars on its page under **Layouts** in Art Frames.
+
+Each version tag of this repository, such as `v0.1.0`, starts `.github/workflows/release.yml`. It builds one image per published layout, for amd64 and arm64: `ghcr.io/brianmuse/art-frames-layout-<id>`. At start, each image copies its `layout.json` into its socket folder, `/run/dayframe-site`. Art Frames reads it there, so its settings page always matches the running layout.
+
+### With a source install
 
 Art Frames installs every layout in `catalog.json`. You do not install layouts one by one.
 

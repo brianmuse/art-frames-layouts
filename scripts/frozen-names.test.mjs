@@ -49,6 +49,8 @@ for (const app of apps) {
     'DAYFRAME_SITE_CONFIG=/site-config/config.json',
     'DAYFRAME_SITE_STATE=/site-state',
     'mkdir -p /run/dayframe-site ',
+    // The Art Frames install file reads the manifest from the socket folder.
+    'cp layout.json /run/dayframe-site/layout.json',
   ];
 }
 
