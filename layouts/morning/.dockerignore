@@ -10,3 +10,4 @@
 !package-lock.json
 !astro.config.mjs
 !tsconfig.json
+!layout.json
