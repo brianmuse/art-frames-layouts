@@ -288,7 +288,7 @@ Night hours use moon icons. Times use the 12-hour clock in both units, like morn
 
 1. A background loop checks every minute. The forecast refreshes about every 20 minutes. After a failure, a retry waits 1, 2, 4… minutes, up to 20.
 2. Each refresh asks Open-Meteo for eight days, so a forecast saved yesterday still fills a full week today.
-3. The layout saves the forecast in `/site-state/weather-cache.json` (mode 0600). Restarts reuse it.
+3. The layout saves the forecast in `/site-state/weather-cache.json` (mode 0600). Restarts reuse it. It also saves the host's last timezone in `/site-state/host.json`, so the background refresh can run before the first render after a restart.
 4. Renders read the saved copy. Only the first load waits, for up to 3 seconds. If it is still loading, the render returns `202`.
 5. When a refresh fails, the screen keeps the saved forecast. After 45 minutes it shows "Updated 2 hr ago" and why the refresh failed. With no usable forecast, it shows "Weather is unavailable" and the reason, for example "Couldn't find “Bostn, MA”. Check the city in this layout's settings." Production never shows sample data.
 
@@ -302,7 +302,7 @@ npm ci
 npm run dev
 ```
 
-Open `http://127.0.0.1:4321/?data=sample` for a made-up Boston forecast (`src/fixtures/sample-forecast.json`). Add `time=19:40` to see the evening, or `art=off`, `mat=on`, `stale=on`, `units=celsius`, `weather=off` or `city=off` to see other states. Production ignores these parameters. Without `?data=sample`, development uses the real clock and `.secrets/config.json`.
+Open `http://127.0.0.1:4321/?data=sample` for a made-up Boston forecast (`src/fixtures/sample-forecast.json`). Add `time=19:40` to see the evening, or `art=off`, `art=none`, `mat=on`, `stale=on`, `units=celsius`, `weather=off` or `city=off` to see other states. `art=off` turns off the artwork switch; `art=none` sends no artwork at all, like a host with no art. Production ignores these parameters. Without `?data=sample`, development uses the real clock and `.secrets/config.json`.
 
 ## The Photos layout
 

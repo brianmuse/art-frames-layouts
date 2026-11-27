@@ -4,9 +4,13 @@ import {ProviderError,cached,fetchText} from './fetch.mjs';
 // fetches an eight-day forecast and the cache keeps it. Each render reads today
 // and the week from it, so a saved forecast stays correct after midnight.
 const states={AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',DC:'District of Columbia'};
+// Common names for country codes.
+const countries={USA:'US',UK:'GB'};
 
 export const hosts={geocoding:'geocoding-api.open-meteo.com',forecast:'api.open-meteo.com'};
-export const forecastDays=8,maxHours=48;
+// Open-Meteo's hourly data starts at midnight of the first day. Keep four days,
+// so a forecast saved late in the evening still fills the strip a day later.
+export const forecastDays=8,maxHours=96;
 export const weatherKey=(city,units,timezone)=>JSON.stringify([city,units,timezone]);
 
 async function locate(city) {
@@ -14,8 +18,13 @@ async function locate(city) {
     const params=new URLSearchParams({name:city.split(',')[0].trim(),count:'10',language:'en',format:'json'});
     const result=JSON.parse(await fetchText(`https://${hosts.geocoding}/v1/search?`+params,[hosts.geocoding],1_000_000,{timeoutMs:10000}));
     const suffix=city.split(',')[1]?.trim();
-    const region=(states[suffix?.toUpperCase()] || suffix)?.toLowerCase();
-    const match=(result.results || []).find(item=>!region || [item.admin1,item.admin1_code,item.country,item.country_code].some(value=>value?.toLowerCase()===region));
+    const code=suffix?.toUpperCase();
+    // A 2-letter suffix can be a US state or a country code ("Toronto, CA").
+    // Try the state or region name first, then the country code.
+    const regions=suffix ? [states[code] || suffix,countries[code] || (code.length===2 ? code : null)].filter(Boolean).map(value=>value.toLowerCase()) : [null];
+    const places=result.results || [];
+    const fits=region=>item=>!region || [item.admin1,item.admin1_code,item.country,item.country_code].some(value=>value?.toLowerCase()===region);
+    const match=regions.map(region=>places.find(fits(region))).find(Boolean);
     if (!match || !Number.isFinite(match.latitude) || !Number.isFinite(match.longitude)) throw new ProviderError('unknown-city');
     return {latitude:match.latitude,longitude:match.longitude};
   },{failSeconds:300});

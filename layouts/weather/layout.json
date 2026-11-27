@@ -12,7 +12,7 @@
       "key": "city",
       "label": "Weather location",
       "type": "text",
-      "description": "City and state or country, for example Boston, MA."
+      "description": "City and state or country, for example Boston, MA. The layout needs a city to show the weather."
     },
     {
       "key": "units",

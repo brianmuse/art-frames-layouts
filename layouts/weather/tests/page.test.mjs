@@ -30,12 +30,20 @@ test('stale data stays on screen with when it was updated and why it did not ref
   assert.equal(page.updated,'Updated 2 hr ago · Couldn’t refresh. Open-Meteo could not be reached.');
   const quiet=buildWeather(saved({at:now.valueOf()-30*60000}),settings,{now,timezone:zone});
   assert.equal(quiet.updated,'','Half an hour old is still current');
+  const recent=buildWeather(saved({at:now.valueOf()-21*60000,error:'timeout'}),settings,{now,timezone:zone});
+  assert.equal(recent.updated,'','A failed refresh of recent data stays quiet');
+  const lostRecent=buildWeather(saved({at:now.valueOf()-21*60000,error:'unknown-city'}),settings,{now,timezone:zone});
+  assert.equal(lostRecent.updated,'');
+  const lostOld=buildWeather(saved({at:now.valueOf()-2*3600000,error:'unknown-city'}),settings,{now,timezone:zone});
+  assert.equal(lostOld.updated,'Updated 2 hr ago · Couldn’t find the city');
 });
 
 test('no forecast, no city or an unknown city each say so plainly, never with sample data',()=>{
   const down=buildWeather({weather:{value:null,at:null,error:'timeout',loading:false}},settings,{now,timezone:zone});
   assert.deepEqual(down.message,{title:'Weather is unavailable',detail:'Open-Meteo did not respond in time.'});
   assert.equal(down.weather,undefined);
+  const loading=buildWeather({weather:{value:null,at:null,error:null,loading:true}},settings,{now,timezone:zone});
+  assert.equal(loading.message.detail,'The saved forecast is out of date.','A first load returns 202 before this point, so there is no loading message');
   const lost=buildWeather({weather:{value:null,at:null,error:'unknown-city',loading:false}},weatherSettings({city:'Atlantis, XX'}),{now,timezone:zone});
   assert.equal(lost.message.detail,'Couldn’t find “Atlantis, XX”. Check the city in this layout’s settings.');
   const none=buildWeather({weather:null},weatherSettings({}),{now,timezone:zone});

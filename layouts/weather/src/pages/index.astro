@@ -84,7 +84,7 @@ const laterToday = weather?.hours.every((hour: any) => !hour.later);
   #art { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; background: #e9e2d7; }
   #content { position: absolute; z-index: 1; left: var(--content-x,0%); top: var(--content-y,0%); width: var(--content-width,100%); height: var(--content-height,100%); overflow: hidden; --u: calc(var(--screen-u) * var(--content-scale,1)); }
   /* Dark fades behind the text on the left and right; the middle of the art stays clear. */
-  #content::before { content: ""; position: absolute; inset: 0; background: linear-gradient(40deg, rgba(8,20,18,.88), rgba(8,20,18,.66) 24%, transparent 50%), linear-gradient(270deg, rgba(8,20,18,.88), rgba(8,20,18,.66) 34%, transparent 52%); }
+  #content::before { content: ""; position: absolute; inset: 0; background: linear-gradient(40deg, rgba(8,20,18,.88), rgba(8,20,18,.66) 34%, transparent 60%), linear-gradient(270deg, rgba(8,20,18,.88), rgba(8,20,18,.66) 42%, transparent 62%); }
   .plain #content::before { display: none; }
   p, ol, dl, dd { margin: 0; }
   ol { padding: 0; list-style: none; }
@@ -96,7 +96,7 @@ const laterToday = weather?.hours.every((hour: any) => !hour.later);
   .now { display: flex; align-items: center; margin-top: calc(var(--u) * 1.4); }
   .now-glyph { flex: 0 0 auto; width: calc(var(--u) * 7.4); height: calc(var(--u) * 7.4); margin-right: calc(var(--u) * 1.4); }
   .temperature { flex: 0 0 auto; font-size: calc(var(--u) * 10); font-weight: 400; line-height: 1; letter-spacing: -.05em; margin-right: calc(var(--u) * 1.8); }
-  .now-words { flex: 1 1 auto; }
+  .now-words { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
   .conditions { font-size: calc(var(--u) * 2.2); line-height: 1.2; letter-spacing: -.02em; }
   .feels { font-size: calc(var(--u) * 1.3); line-height: 1.3; color: var(--muted); margin-top: calc(var(--u) * .4); }
   .facts { display: flex; margin-top: calc(var(--u) * 1.8); padding-top: calc(var(--u) * 1.1); border-top: 1px solid var(--line); }
@@ -108,7 +108,7 @@ const laterToday = weather?.hours.every((hour: any) => !hour.later);
   .hours { display: flex; margin-top: calc(var(--u) * .5); }
   .hours li { flex: 1 1 0; width: 12.5%; text-align: center; }
   .hours li.new-day { border-left: 1px solid var(--line); }
-  .hour-day { display: block; font-size: calc(var(--u) * .75); line-height: 1.3; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .hour-day { display: block; font-size: calc(var(--u) * .9); line-height: 1.3; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
   .hour-time { display: block; font-size: calc(var(--u) * .95); line-height: 1.3; color: var(--muted); white-space: nowrap; }
   .hour-glyph { display: block; width: calc(var(--u) * 2.2); height: calc(var(--u) * 2.2); margin: calc(var(--u) * .4) auto; }
   .hour-temp { display: block; font-size: calc(var(--u) * 1.5); line-height: 1.2; font-variant-numeric: tabular-nums; }

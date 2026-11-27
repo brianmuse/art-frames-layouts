@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import fs from 'node:fs/promises';
-import {weatherView,pruneForecast,conditions,clockLabel,forecastUrl} from '../src/server/weather.mjs';
+import {weatherView,pruneForecast,conditions,clockLabel,forecastUrl,maxHours} from '../src/server/weather.mjs';
 import {sampleForecast} from '../src/server/sample.mjs';
 
 const zone='America/New_York';
@@ -16,10 +16,10 @@ test('the fixture is a believable Boston week, and pruning keeps every field the
   for (const key of ['temperature_2m_max','temperature_2m_min','precipitation_probability_max','sunrise','sunset','weather_code']) assert.equal(raw.daily[key].length,8,key);
   for (const key of ['temperature_2m','apparent_temperature','weather_code','precipitation_probability','is_day']) assert.equal(raw.hourly[key].length,48,key);
   raw.daily.temperature_2m_max.forEach((high,index)=>assert.ok(high>raw.daily.temperature_2m_min[index] && high<70 && raw.daily.temperature_2m_min[index]>25,'November in Boston'));
-  const dirty=pruneForecast({current:{temperature_2m:'hot',time:'<b>'},daily:{time:['2026-11-02','nope'],sunrise:['javascript:x']},hourly:{time:Array(200).fill('2026-11-02T00:00')}});
+  const dirty=pruneForecast({current:{temperature_2m:'hot',time:'<b>'},daily:{time:['2026-11-02','nope'],sunrise:['javascript:x']},hourly:{time:Array(500).fill('2026-11-02T00:00')}});
   assert.equal(dirty.current.temperature_2m,null);assert.equal(dirty.current.time,null);
   assert.deepEqual(dirty.daily.time,['2026-11-02',null]);assert.deepEqual(dirty.daily.sunrise,[null]);
-  assert.equal(dirty.hourly.time.length,48,'Arrays are bounded');
+  assert.equal(dirty.hourly.time.length,96,'Arrays are bounded');
 });
 
 test('the forecast request asks one fixed host for eight days in local time',()=>{
@@ -96,4 +96,26 @@ test('the sample forecast moves to any day and follows the hour',()=>{
   assert.equal(raw.current.temperature_2m,fixture.hourly.temperature_2m[15]);
   const view=weatherView(raw,{now:later,timezone:zone});
   assert.equal(view.week[0].name,'Today');assert.equal(view.week[1].name,'Wed');
+});
+
+test('a forecast saved late yesterday still fills the hourly strip this evening',()=>{
+  // Open-Meteo's hourly data starts at midnight of the first day: 8 days of hours.
+  const hours=[];
+  for (let day=0;day<8;day++) for (let hour=0;hour<24;hour++) hours.push(`2026-11-${String(2+day).padStart(2,'0')}T${String(hour).padStart(2,'0')}:00`);
+  const days=Array.from({length:8},(_,index)=>`2026-11-${String(2+index).padStart(2,'0')}`);
+  const full={
+    current:{time:'2026-11-02T21:00',temperature_2m:44,apparent_temperature:40,weather_code:0,is_day:0},
+    daily:{time:days,weather_code:days.map(()=>1),temperature_2m_max:days.map(()=>55),temperature_2m_min:days.map(()=>40),precipitation_probability_max:days.map(()=>10),
+      sunrise:days.map(day=>day+'T06:23'),sunset:days.map(day=>day+'T16:34')},
+    hourly:{time:hours,temperature_2m:hours.map(()=>45),apparent_temperature:hours.map(()=>41),weather_code:hours.map(()=>2),precipitation_probability:hours.map(()=>0),is_day:hours.map(()=>1)},
+  };
+  const raw=pruneForecast(full);
+  assert.equal(raw.hourly.time.length,maxHours);
+  // Fetched 9 PM day 1, shown 8 PM day 2 (EST is UTC-5).
+  const view=weatherView(raw,{now:new Date('2026-11-04T01:00:00Z'),timezone:zone,fetchedAt:Date.parse('2026-11-03T02:00:00Z')});
+  assert.equal(view.hours.length,8);
+  assert.deepEqual(view.hours.map(hour=>hour.time),['9 PM','11 PM','1 AM','3 AM','5 AM','7 AM','9 AM','11 AM']);
+  // Two saved forecasts stay far below the cache file's 1 MB limit.
+  const entry={at:0,value:raw,failed_at:null,failures:0,error:null};
+  assert.ok(JSON.stringify({version:1,weather:{a:entry,b:entry}}).length<50_000);
 });

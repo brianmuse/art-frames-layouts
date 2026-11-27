@@ -67,15 +67,15 @@ export function buildWeather(read,settings,{now,timezone}) {
   const view=entry?.value ? weatherView(entry.value,{now,timezone,units:settings.units,fetchedAt:entry.at ?? time}) : null;
   if (!view) {
     const detail=entry?.error==='unknown-city' ? `Couldn’t find “${settings.city}”. Check the city in this layout’s settings.`
-      : entry?.loading && !entry?.error ? 'Loading the forecast…'
       : entry?.error ? issue(entry.error)
       : 'The saved forecast is out of date.';
     return {...base,message:{title:'Weather is unavailable',detail}};
   }
   const ago=entry.at ? time-entry.at : 0;
   const notes=[];
+  // A recent forecast is still good, so a failed refresh stays quiet until the data is stale.
   if (ago>staleMs) notes.push(`Updated ${timeAgo(entry.at,time).toLowerCase()}`);
-  if (entry.error) notes.push(entry.error==='unknown-city' ? 'Couldn’t find the city' : 'Couldn’t refresh. '+issue(entry.error));
+  if (ago>staleMs && entry.error) notes.push(entry.error==='unknown-city' ? 'Couldn’t find the city' : 'Couldn’t refresh. '+issue(entry.error));
   return {...base,weather:{...view,week:rangeBars(view.week,{current:view.current,units:settings.units})},updated:notes.join(' · ')};
 }
 

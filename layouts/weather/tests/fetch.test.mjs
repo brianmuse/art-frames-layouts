@@ -42,6 +42,26 @@ test('the forecast geocodes the city, picks the right state, then asks Open-Mete
   assert.equal('_comment' in raw,false,'Only the pruned fields are kept');
 });
 
+test('a 2-letter suffix also matches a country code, and USA and UK are known',async(t)=>{
+  const towns=[
+    {name:'Toronto',latitude:41.9,longitude:-90.86,admin1:'Iowa',country:'United States',country_code:'US'},
+    {name:'Toronto',latitude:43.7,longitude:-79.42,admin1:'Ontario',country:'Canada',country_code:'CA'},
+    {name:'Boston',latitude:52.97,longitude:-0.02,admin1:'England',country:'United Kingdom',country_code:'GB'},
+    {name:'Boston',latitude:42.36,longitude:-71.06,admin1:'Massachusetts',country:'United States',country_code:'US'},
+  ];
+  const find=async city=>{
+    t.mock.reset();
+    const seen=script(t,url=>url.hostname==='geocoding-api.open-meteo.com' ? {status:200,body:JSON.stringify({results:towns.filter(town=>town.name===url.searchParams.get('name'))})} : {status:200,body:fixture});
+    await fetchForecast({city,units:'fahrenheit',timezone:'America/New_York'});
+    assert.equal(seen[0].hostname,'geocoding-api.open-meteo.com');
+    return seen.at(-1).searchParams.get('latitude');
+  };
+  assert.equal(await find('Toronto, CA'),'43.7','No Toronto in California, so CA means Canada');
+  assert.equal(await find('Boston, UK'),'52.97');
+  assert.equal(await find('Boston, USA'),'42.36');
+  assert.equal(await find('Boston, ma'),'42.36','A state still wins over a country code');
+});
+
 test('an unknown city and a server error fail with a clear code',async(t)=>{
   script(t,()=>({status:200,body:JSON.stringify({results:[]})}));
   await assert.rejects(fetchForecast({city:'Nowhere, ZZ',units:'fahrenheit',timezone:'America/New_York'}),{code:'unknown-city'});
