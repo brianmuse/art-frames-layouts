@@ -4,23 +4,23 @@ This file lists third-party material in this repository. The MIT license in `LIC
 
 ## Attribution
 
-The `morning` app is inspired by [Frame Daily Plan](https://github.com/JustifyTechExpenses/frame-daily-plan). It takes the morning planner idea and the calendar parsing approach from that project. Its license is below.
+The `morning` layout is inspired by [Frame Daily Plan](https://github.com/JustifyTechExpenses/frame-daily-plan). It takes the morning planner idea and the calendar parsing approach from that project. Its license is below.
 
 ## Inter font
 
-Each app ships the Inter font in `layouts/<id>/public/fonts/` (`Inter-Regular.ttf` and `Inter-SemiBold.ttf`). Inter is licensed under the SIL Open Font License 1.1. The full license is next to the font files, in `layouts/morning/public/fonts/Inter-LICENSE.txt`, `layouts/news/public/fonts/Inter-LICENSE.txt`, `layouts/photos/public/fonts/Inter-LICENSE.txt` and `layouts/weather/public/fonts/Inter-LICENSE.txt`.
+Each layout ships the Inter font in `layouts/<id>/public/fonts/` (`Inter-Regular.ttf` and `Inter-SemiBold.ttf`). Inter is licensed under the SIL Open Font License 1.1. The full license is next to the font files, in `layouts/morning/public/fonts/Inter-LICENSE.txt`, `layouts/news/public/fonts/Inter-LICENSE.txt`, `layouts/photos/public/fonts/Inter-LICENSE.txt` and `layouts/weather/public/fonts/Inter-LICENSE.txt`.
 
 ## Development artwork
 
-`layouts/morning/public/dayframe-art.jpg` and its copies `layouts/news/public/dayframe-art.jpg` and `layouts/weather/public/dayframe-art.jpg` are a resized derivative of Claude Monet, *Water Lilies (Agapanthus)*, Cleveland Museum of Art, accession 1960.81. The museum provides this image under CC0. Museum record: https://www.clevelandart.org/art/1960.81. It is a public development sample. Installed apps get the operator's selected art from Art Frames instead.
+`layouts/morning/public/dayframe-art.jpg` and its copies `layouts/news/public/dayframe-art.jpg` and `layouts/weather/public/dayframe-art.jpg` are a resized derivative of Claude Monet, *Water Lilies (Agapanthus)*, Cleveland Museum of Art, accession 1960.81. The museum provides this image under CC0. Museum record: https://www.clevelandart.org/art/1960.81. It is a public development sample. Installed layouts get the operator's selected art from Art Frames instead.
 
 ## npm dependencies
 
-This repository does not include any npm package code. `npm ci` downloads the packages listed in each app's `package-lock.json`, such as Astro, `@astrojs/node`, `ipaddr.js`, `node-ical` (morning) and `sharp` (photos). The app Docker images contain these packages with their own license files.
+This repository does not include any npm package code. `npm ci` downloads the packages listed in each layout's `package-lock.json`, such as Astro, `@astrojs/node`, `ipaddr.js`, `node-ical` (morning) and `sharp` (photos). The layout Docker images contain these packages with their own license files.
 
 ## Data sources
 
-The apps read data from third-party services at run time:
+The layouts read data from third-party services at run time:
 
 - Weather: [Open-Meteo](https://open-meteo.com/), CC BY 4.0 (`morning`, `news` and `weather`). The `weather` layout's sample forecast is made up for its fixtures.
 - Headlines: Google News RSS feeds (`news`). Headline text and source names belong to their publishers. The repository holds only sample headlines written for its fixtures.
