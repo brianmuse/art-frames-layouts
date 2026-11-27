@@ -106,7 +106,8 @@ const showArt = Boolean(snapshot.art?.image);
   .sync-status strong { display: block; font-size: calc(var(--u) * .8); font-weight: 600; }
   .sync-status small { display: block; font-size: calc(var(--u) * .75); margin-top: calc(var(--u) * .15); }
   #tasks { margin-top: calc(var(--u) * .8); border-top: 1px solid var(--glass-line); padding-top: calc(var(--u) * .5); line-height: 1.25; }
-  #tasks ul { display: flex; flex-wrap: wrap; gap: calc(var(--u) * .6); margin: calc(var(--u) * .4) 0 0; padding-left: calc(var(--u) * 1); font-size: calc(var(--u) * .85); }
+  #tasks ul { display: flex; flex-wrap: wrap; gap: calc(var(--u) * .4) calc(var(--u) * 1.2); margin: calc(var(--u) * .4) 0 0; padding-left: 0; list-style: none; font-size: calc(var(--u) * .85); }
+  #tasks li::before { content: "•"; margin-right: calc(var(--u) * .45); color: var(--glass-muted); }
   #more-tasks { margin-top: calc(var(--u) * .4); font-size: calc(var(--u) * .85); color: var(--glass-muted); }
   #more-tasks[hidden] { display: none; }
   .weather-now { margin: calc(var(--u) * .4) 0 calc(var(--u) * 1); }
