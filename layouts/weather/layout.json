@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "id": "weather",
+  "name": "Weather",
+  "description": "Just the weather, over the day’s selected artwork: today first, with the temperature now, the hours ahead, sunrise and sunset, then the next seven days. This Astro layout owns its Open-Meteo integration.",
+  "entry": "index.html",
+  "network": "bridge",
+  "memory_mb": 384,
+  "artwork": true,
+  "settings": [
+    {
+      "key": "city",
+      "label": "Weather location",
+      "type": "text",
+      "description": "City and state or country, for example Boston, MA."
+    },
+    {
+      "key": "units",
+      "label": "Temperature units",
+      "type": "choice",
+      "default": "fahrenheit",
+      "choices": [
+        "fahrenheit",
+        "celsius"
+      ]
+    }
+  ],
+  "display_settings": [
+    {
+      "key": "show_art",
+      "type": "boolean",
+      "default": true,
+      "label": "Show the artwork behind the weather",
+      "description": "Turn this off to show the weather on a plain dark background on this TV.",
+      "badge": "Art off"
+    }
+  ]
+}

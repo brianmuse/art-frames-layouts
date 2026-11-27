@@ -16,6 +16,11 @@
       "id": "photos",
       "name": "Photos",
       "path": "layouts/photos"
+    },
+    {
+      "id": "weather",
+      "name": "Weather",
+      "path": "layouts/weather"
     }
   ]
 }

@@ -9,7 +9,7 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
-const apps = ['morning', 'news', 'photos'];
+const apps = ['morning', 'news', 'photos', 'weather'];
 
 const SOCKET = "'/run/dayframe-site/site.sock'";
 const ORIGIN = "'http://dayframe.local'";
@@ -28,10 +28,13 @@ const frozen = {
   ],
   'layouts/morning/src/layouts/Frame.astro': ['data-dayframe-ready=', 'data-dayframe-server-rendered='],
   'layouts/news/src/layouts/Frame.astro': ['data-dayframe-ready=', 'data-dayframe-server-rendered='],
+  'layouts/weather/src/layouts/Frame.astro': ['data-dayframe-ready=', 'data-dayframe-server-rendered='],
   'layouts/photos/src/pages/index.astro': ['data-dayframe-ready="true"'],
   'layouts/morning/src/fixtures/sample.json': ['"/dayframe-art.jpg"'],
   'layouts/news/src/fixtures/sample.json': ['"/dayframe-art.jpg"'],
   'layouts/news/src/server/page.mjs': ['http:\\/\\/dayframe\\.local\\/'],
+  'layouts/weather/src/fixtures/sample.json': ['"/dayframe-art.jpg"'],
+  'layouts/weather/src/server/page.mjs': ['http:\\/\\/dayframe\\.local\\/'],
   'layouts/photos/src/server/album-link.mjs': ["'dayframe-photos\\0'"],
   'layouts/photos/server.mjs': ['process.env.DAYFRAME_PHOTOS_NO_SYNC'],
 };
@@ -71,6 +74,9 @@ const readers = {
     'layouts/news/dev.mjs',
     'layouts/news/src/server/settings.mjs',
     'layouts/news/src/server/cache.mjs',
+    'layouts/weather/dev.mjs',
+    'layouts/weather/src/server/settings.mjs',
+    'layouts/weather/src/server/cache.mjs',
     'layouts/photos/dev.mjs',
     'layouts/photos/src/server/photo-service.mjs',
     'layouts/photos/src/server/dev-preview.mjs',
@@ -117,7 +123,7 @@ for (const app of apps) {
 }
 
 test('the sample artwork keeps its protocol file name', () => {
-  for (const app of ['morning', 'news']) {
+  for (const app of ['morning', 'news', 'weather']) {
     assert.ok(fs.existsSync(path.join(root, 'layouts', app, 'public', 'dayframe-art.jpg')), `${app} lost public/dayframe-art.jpg`);
   }
 });

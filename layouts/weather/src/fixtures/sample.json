@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "now": "2026-11-02T08:15:00-05:00",
+  "timezone": "America/New_York",
+  "display": {
+    "width": 3840,
+    "height": 2160
+  },
+  "data": {},
+  "display_settings": {
+    "show_art": true
+  },
+  "art": {
+    "title": "Water Lilies (Agapanthus)",
+    "artist": "Claude Monet",
+    "year": "c. 1915–26",
+    "rights": "Public domain · Cleveland Museum of Art (CC0) · development sample",
+    "source_url": "https://www.clevelandart.org/art/1960.81",
+    "image": "/dayframe-art.jpg"
+  }
+}

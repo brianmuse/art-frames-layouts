@@ -7,6 +7,7 @@ The layouts:
 - `morning`: calendar and weather over the day's artwork. This is the default layout.
 - `news`: date, weather and top headlines over the artwork.
 - `photos`: photos from a Google Photos shared album.
+- `weather`: just the weather over the artwork. Today first, then the week.
 
 ## Quick start
 
@@ -264,6 +265,45 @@ npm run dev
 
 Open `http://127.0.0.1:4321/?data=sample` for sample data. Add `art=off`, `mat=on`, `stale=on`, `topics=one`, `weather=off` or `count=5`…`8` to see other states. Production ignores these parameters. Without `?data=sample`, development uses the real clock and `.secrets/config.json`.
 
+## The Weather layout
+
+`layouts/weather` shows only the weather, over the day's artwork. It shows the day first, then the week. It uses Open-Meteo for the forecast and the city search.
+
+### What it shows
+
+- **Left, at the bottom: the day.** The city and date, the temperature now in large type, the conditions and the "feels like" temperature. Below that: today's high, low, chance of rain (or snow) and sunrise and sunset. Then eight forecast points two hours apart, each with the time, an icon, the temperature and the chance of rain when it is 10% or more. In the evening the points run on into tomorrow, with the weekday above the first point after midnight.
+- **Right, at the bottom: the week.** Seven rows, from today. Each row has the day, an icon, the chance of rain (10% or more), the low, a bar and the high. All bars share one temperature scale, so you can compare days at a glance. The bar color goes from cool blue to warm apricot. Today's bar has a dot at the temperature now.
+- **Background:** the artwork, with dark fades behind the text, like news. The middle of the art stays clear. Turn off the per-TV switch **Show the artwork behind the weather** (`show_art`) to use a plain dark green background on that TV. With a mat, the content stays inside `art.viewport`.
+
+Night hours use moon icons. Times use the 12-hour clock in both units, like morning and news.
+
+### Settings
+
+| Key | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `city` | text | blank | City and state or country, for example `Boston, MA`. Blank shows "No city set" and fetches nothing. |
+| `units` | choice | fahrenheit | `fahrenheit` or `celsius`. |
+
+### Data and failures
+
+1. A background loop checks every minute. The forecast refreshes about every 20 minutes. After a failure, a retry waits 1, 2, 4… minutes, up to 20.
+2. Each refresh asks Open-Meteo for eight days, so a forecast saved yesterday still fills a full week today.
+3. The layout saves the forecast in `/site-state/weather-cache.json` (mode 0600). Restarts reuse it.
+4. Renders read the saved copy. Only the first load waits, for up to 3 seconds. If it is still loading, the render returns `202`.
+5. When a refresh fails, the screen keeps the saved forecast. After 45 minutes it shows "Updated 2 hr ago" and why the refresh failed. With no usable forecast, it shows "Weather is unavailable" and the reason, for example "Couldn't find “Bostn, MA”. Check the city in this layout's settings." Production never shows sample data.
+
+The layout fetches only the two Open-Meteo hosts, with the same hardened helper as morning and news: HTTPS only, public DNS pinning, size limits and deadlines.
+
+### Develop
+
+```sh
+cd layouts/weather
+npm ci
+npm run dev
+```
+
+Open `http://127.0.0.1:4321/?data=sample` for a made-up Boston forecast (`src/fixtures/sample-forecast.json`). Add `time=19:40` to see the evening, or `art=off`, `mat=on`, `stale=on`, `units=celsius`, `weather=off` or `city=off` to see other states. Production ignores these parameters. Without `?data=sample`, development uses the real clock and `.secrets/config.json`.
+
 ## The Photos layout
 
 `layouts/photos` shows photos from a Google Photos shared album. The photo changes on a fixed time step, such as every 15 minutes.
@@ -351,6 +391,8 @@ npm --prefix layouts/news test
 npm --prefix layouts/news run build
 npm --prefix layouts/photos test
 npm --prefix layouts/photos run build
+npm --prefix layouts/weather test
+npm --prefix layouts/weather run build
 ```
 
 CI runs the catalog validator and its tests, then runs `npm ci` and `npm test` for each folder under `layouts/`.
