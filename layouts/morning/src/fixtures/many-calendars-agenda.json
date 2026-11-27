@@ -1,0 +1,100 @@
+[
+  {
+    "time": "08:00 – 09:00",
+    "title": "Standup",
+    "calendar": "Work",
+    "color": "maroon",
+    "past": false
+  },
+  {
+    "time": "09:30 – 10:00",
+    "title": "Pickup",
+    "calendar": "Family",
+    "color": "lilac",
+    "past": false
+  },
+  {
+    "time": "10:00 – 11:00",
+    "title": "Pickup",
+    "calendar": "School",
+    "color": "blue",
+    "past": false
+  },
+  {
+    "time": "11:30 – 12:00",
+    "title": "Haircut",
+    "calendar": "Health",
+    "color": "green",
+    "past": false
+  },
+  {
+    "time": "12:00 – 13:00",
+    "title": "Deploy",
+    "calendar": "Side project",
+    "color": "orange",
+    "past": false
+  },
+  {
+    "time": "13:30 – 14:00",
+    "title": "Food bank",
+    "calendar": "Community",
+    "color": "#5b6b2e",
+    "past": false
+  },
+  {
+    "time": "14:00 – 15:00",
+    "title": "Chapter 9",
+    "calendar": "Book club",
+    "color": "red",
+    "past": false
+  },
+  {
+    "time": "15:30 – 16:00",
+    "title": "Water the tomatoes",
+    "calendar": "Garden",
+    "color": "grey",
+    "past": false
+  },
+  {
+    "time": "16:00 – 17:00",
+    "title": "Review",
+    "calendar": "Work",
+    "color": "maroon",
+    "past": false
+  },
+  {
+    "time": "17:30 – 18:00",
+    "title": "Guitar lesson",
+    "calendar": "Family",
+    "color": "lilac",
+    "past": false
+  },
+  {
+    "time": "18:00 – 19:00",
+    "title": "Science fair",
+    "calendar": "School",
+    "color": "blue",
+    "past": false
+  },
+  {
+    "time": "19:30 – 20:00",
+    "title": "Gym",
+    "calendar": "Health",
+    "color": "green",
+    "past": false
+  },
+  {
+    "time": "20:00 – 21:00",
+    "title": "Demo",
+    "calendar": "Side project",
+    "color": "orange",
+    "past": false
+  },
+  {
+    "time": "21:30 – 22:00",
+    "title": "Board call",
+    "calendar": "Community",
+    "color": "#5b6b2e",
+    "past": false
+  }
+]

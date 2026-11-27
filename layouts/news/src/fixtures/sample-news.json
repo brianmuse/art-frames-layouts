@@ -1,0 +1,33 @@
+{
+  "note": "Development sample. Short headlines written for this fixture; the sources are made-up names.",
+  "feeds": [
+    {
+      "label": "Top stories",
+      "items": [
+        {"title": "City council approves a new riverside park after a long public debate", "source": "Harbor Daily", "minutes_ago": 22},
+        {"title": "Rail line reopens ahead of schedule as repairs finish early", "source": "Metro Ledger", "minutes_ago": 48},
+        {"title": "Libraries extend evening hours for the winter season", "source": "Civic Wire", "minutes_ago": 95},
+        {"title": "Regional growers report a strong apple harvest", "source": "Valley Post", "minutes_ago": 180},
+        {"title": "Bridge inspection finds no structural problems", "source": "Metro Ledger", "minutes_ago": 260},
+        {"title": "Weekend farmers market moves indoors for November", "source": "Harbor Daily", "minutes_ago": 400}
+      ]
+    },
+    {
+      "label": "Technology",
+      "items": [
+        {"title": "Open-source group releases a faster image format for the web", "source": "Circuit Notes", "minutes_ago": 35},
+        {"title": "Battery researchers show a cell that charges in ten minutes", "source": "Signal & Noise", "minutes_ago": 130},
+        {"title": "Phone makers agree on a common repair standard", "source": "Circuit Notes", "minutes_ago": 300},
+        {"title": "A quiet update makes older laptops last longer on a charge", "source": "Bytewise", "minutes_ago": 520}
+      ]
+    },
+    {
+      "label": "Science",
+      "items": [
+        {"title": "Astronomers spot a comet that will be visible without a telescope next month", "source": "Field Journal", "minutes_ago": 70},
+        {"title": "Ocean survey maps a deep reef that scientists had never seen", "source": "Tidewater Review", "minutes_ago": 210},
+        {"title": "Migrating cranes arrive a week early this year", "source": "Field Journal", "minutes_ago": 640}
+      ]
+    }
+  ]
+}

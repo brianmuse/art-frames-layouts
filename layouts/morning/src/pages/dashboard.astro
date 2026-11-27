@@ -1,0 +1,126 @@
+---
+import Frame from '../layouts/Frame.astro';
+import Glyph from '../components/Glyph.astro';
+import { weatherGlyph } from '../lib/glyphs';
+import { pageContext } from '../lib/context';
+import { dashboardView, weatherView, calendarSectionStyle, framingStyle } from '../lib/dashboard';
+const { snapshot, serverRendered, timeline } = pageContext(Astro.locals);
+const view = dashboardView(snapshot,{timeline});
+const weather = weatherView(view.plan?.weather);
+const showPlan = Boolean(snapshot.planner?.active && view.plan);
+const showArt = Boolean(snapshot.art?.image);
+---
+<Frame title="Morning dashboard example" serverRendered={serverRendered}>
+<div id="screen">
+  <img id="art" src={showArt ? snapshot.art.image : undefined} alt={showArt ? snapshot.art.title : "Today's selected artwork"} hidden={!showArt} />
+  <main id="plan" style={{...framingStyle(snapshot),...view.spacing}} class:list={{ weekend:view.weekend, "one-line":view.oneLine }} hidden={!showPlan}>
+    <section class="calendar-panel">
+      <header class="calendar-header">
+        <h1 id="weekday">{view.heading}</h1>
+        <p id="date">{view.date}</p>
+      </header>
+      <div id="calendar-days" class:list={{weekend:view.weekend}}>
+        {view.days.map((day: any) => <section class="agenda-day">
+          {view.weekend && <h2 class="day-heading">{day.label}<span>{day.dateLabel}</span></h2>}
+          <div class="events">
+            {day.groups.map((group:any) => <section class:list={['calendar-group',{chronological:group.chronological}]} style={group.chronological ? undefined : calendarSectionStyle(group)}>
+              {group.chronological
+                ? <p class="calendar-legend">{group.calendars.map((calendar:any) => <span style={calendarSectionStyle(calendar)} title={calendar.name}>{calendar.name}</span>)}</p>
+                : <h2 class="calendar-heading"><span title={group.name}>{group.name}</span></h2>}
+              {group.events.map((item:any,index:number) => <article class:list={['event',item.state,{first:index===0,last:index===group.events.length-1}]} style={group.chronological ? calendarSectionStyle(item) : undefined}>
+                <div class="event-time"><span class="range-start">{item.times.start}</span></div>
+                <span class="rail-cell" aria-hidden="true"><span class="node"></span></span>
+                <div class="event-body"><h3>{item.title}</h3></div>
+                {item.duration && <span class="duration" aria-label={`Duration: ${item.duration}`}>{item.duration}</span>}
+              </article>)}
+            </section>)}
+            {!day.events.length && <p class="no-events">{view.plan?.calendar_syncing ? 'Loading calendar events…' : view.plan?.calendar_unavailable ? 'Calendar data is unavailable.' : view.plan?.calendar_connected === false ? 'Calendars aren’t connected.' : 'No events scheduled.'}</p>}
+            {(day.hiddenEarlier>0 || day.hiddenLater>0) && <p class="more-events">{[day.hiddenEarlier>0?`${day.hiddenEarlier} earlier`:null,day.hiddenLater>0?`${day.hiddenLater} later`:null].filter(Boolean).join(' · ')} {day.hiddenEarlier+day.hiddenLater===1?'event':'events'}</p>}
+          </div>
+        </section>)}
+      </div>
+      {view.status && <div class="sync-status" role="status"><span aria-hidden="true">{view.status.icon}</span><p><strong>{view.status.title}</strong><small>{view.status.detail}</small></p></div>}
+      <div id="tasks" hidden={!view.visibleTasks}><h2>Tasks</h2><ul id="todos">{(view.plan?.todos || []).slice(0,view.visibleTasks).map((title:string)=><li>{title}</li>)}</ul><p id="more-tasks" hidden={!(view.plan?.todos?.length > view.visibleTasks)}>+{(view.plan?.todos?.length || 0) - view.visibleTasks} more tasks</p></div>
+    </section>
+    <section class="weather-panel"><p class="eyebrow">{weather.eyebrow}</p><div class="weather-now"><div class="current-reading"><svg class="condition-glyph" viewBox="0 0 24 24" fill="none" stroke="#f5f7f0" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path id="weather-condition-glyph" d={weatherGlyph(weather.label)} /></svg><h2 id="temperature">{weather.current}</h2></div><p id="weather">{weather.label}</p></div><dl class="weather-stats">
+      <div><dt><Glyph name="high" />High</dt><dd id="weather-high">{weather.high}</dd></div><div><dt><Glyph name="low" />Low</dt><dd id="weather-low">{weather.low}</dd></div>
+      <div><dt><Glyph name="humidity" />Humidity</dt><dd id="weather-humidity">{weather.humidity}</dd></div><div><dt><Glyph name="sunset" />Sunset</dt><dd id="weather-sunset">{weather.sunset}</dd></div>
+      <div class="rain"><dt><Glyph name="rain" />Rain chance today</dt><dd id="weather-rain">{weather.rain}</dd>{weather.rainTiming && <p id="weather-rain-timing">{weather.rainTiming}</p>}</div>
+    </dl></section>
+  </main>
+  <div id="empty" hidden={showPlan || showArt}><h1>Your collection,<br />your own rhythm.</h1><p>Add a few pieces or connect a calendar to begin.</p></div>
+</div>
+</Frame>
+<style>
+  :global(body) {
+    --screen-u: min(1vw, calc(1vh * 16 / 9)); --u: var(--screen-u);
+    --glass-ink: #f5f7f0; --glass-muted: #d8e2d7; --glass-accent: #d1dfbe;
+    --glass-line: rgba(255,255,255,.28);
+    background: #161e1b; color: var(--glass-ink); display: grid; place-items: center;
+  }
+  #screen { position: relative; width: calc(var(--u) * 100); height: calc(var(--u) * 56.25); overflow: hidden; background: #35463e; font-size: calc(var(--u) * 1); }
+  #art { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; background: #e9e2d7; }
+  #plan { position: absolute; z-index: 1; left: var(--content-x,0%); top: var(--content-y,0%); width: var(--content-width,100%); height: var(--content-height,100%); overflow: hidden; --u: calc(var(--screen-u) * var(--content-scale,1)); }
+  .calendar-panel { position: absolute; right: 4%; top: 5%; width: 34%; max-height: 90%; overflow: hidden; }
+  .weather-panel { position: absolute; z-index: 0; left: 4%; bottom: 5%; width: 30%; }
+  #plan::before { content: ""; position: absolute; inset: 0; background: linear-gradient(45deg, rgba(8,20,18,.84), rgba(8,20,18,.6) 18%, transparent 48%), linear-gradient(270deg, rgba(8,20,18,.84), rgba(8,20,18,.6) 40%, transparent 58%); pointer-events: none; }
+  #plan[hidden], #art[hidden], #empty[hidden], #tasks[hidden] { display: none; }
+  h1 { font: 400 calc(var(--u) * 2.15)/1.15 Inter, system-ui, sans-serif; margin: calc(var(--u) * .25) 0 0; letter-spacing: -.045em; white-space: nowrap; }
+  h2, h3, p { margin: 0; }
+  h2 { font-size: calc(var(--u) * 1); font-weight: 600; }
+  .eyebrow { font-size: calc(var(--u) * .85); letter-spacing: .12em; color: var(--glass-accent); text-transform: uppercase; }
+  .calendar-header { display: flex; justify-content: flex-end; align-items: baseline; gap: calc(var(--u) * .6); padding-bottom: calc(var(--u) * var(--header-gap, 1.3)); }
+  .calendar-header #weekday { color: var(--glass-ink); font-size: calc(var(--u) * 2.3); font-weight: 400; line-height: 1.15; letter-spacing: -.03em; margin: 0; }
+  .calendar-header #date { color: var(--glass-ink); font-size: calc(var(--u) * 2.3); font-weight: 700; line-height: 1.15; letter-spacing: -.045em; white-space: nowrap; }
+  #calendar-days { display: grid; gap: calc(var(--u) * var(--day-gap, 1.6)); }
+  .day-heading { display: flex; justify-content: space-between; align-items: baseline; font-size: calc(var(--u) * 1.1); line-height: 1.25; padding: calc(var(--u) * var(--day-pad, .65)) 0; border-top: 1px solid var(--glass-line); }
+  .day-heading span { font-size: calc(var(--u) * 1.1); font-weight: 400; color: var(--glass-muted); }
+  .calendar-group + .calendar-group { margin-top: calc(var(--u) * var(--group-gap, 1.6)); }
+  /* Timeline: columns are time 5.1 | rail 1.1 | title | duration 6 with .6 gaps, so the rail's center is 6.25u from the left.
+     Each row draws its own rail segment as a background; segments meet because rows have padding, not margins. */
+  .calendar-heading, .calendar-legend { color: var(--glass-muted); font-size: calc(var(--u) * .9); font-weight: 600; line-height: 1.3; letter-spacing: .1em; text-transform: uppercase; padding-bottom: calc(var(--u) * var(--heading-gap, .4)); }
+  .calendar-heading { display: flex; align-items: center; padding-left: calc(var(--u) * 5.7); background: linear-gradient(var(--calendar-rail), var(--calendar-rail)) no-repeat calc(var(--u) * 6.15) calc(var(--u) * .585) / calc(var(--u) * .2) 100%; }
+  .calendar-heading::before { content: ""; flex: none; width: calc(var(--u) * .95); height: calc(var(--u) * .95); margin: 0 calc(var(--u) * .675) 0 calc(var(--u) * .075); border-radius: 50%; background: var(--calendar-color); }
+  .calendar-heading span { min-width: 0; max-width: calc(var(--u) * 24); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .calendar-legend { padding-left: calc(var(--u) * 7.4); }
+  .calendar-legend span { display: inline-block; max-width: 100%; margin-right: calc(var(--u) * 1.2); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; vertical-align: top; }
+  .calendar-legend span::before { content: ""; display: inline-block; width: calc(var(--u) * .75); height: calc(var(--u) * .75); margin-right: calc(var(--u) * .4); border-radius: 50%; background: var(--calendar-color); vertical-align: calc(var(--u) * .05); }
+  .event { display: grid; grid-template-columns: calc(var(--u) * 5.1) calc(var(--u) * 1.1) minmax(0,1fr) calc(var(--u) * 6); gap: calc(var(--u) * .6); padding: calc(var(--u) * var(--event-pad, .6)) 0; background: linear-gradient(var(--calendar-rail), var(--calendar-rail)) no-repeat calc(var(--u) * 6.15) 0 / calc(var(--u) * .2) 100%; }
+  .event.last { background-size: calc(var(--u) * .2) calc(var(--u) * (var(--event-pad, .6) + .78)); }
+  .chronological .event { background-image: linear-gradient(rgba(216,226,215,.75), rgba(216,226,215,.75)); }
+  .chronological .event.first { background-position: calc(var(--u) * 6.15) calc(var(--u) * (var(--event-pad, .6) + .78)); }
+  .chronological .event.first.last { background: none; }
+  /* Nodes sit on the title's first line (1.5625u tall). The screen is read once in the morning, so every event looks the same. */
+  /* The node is a fixed-size block inside its grid cell: WeasyPrint stretches grid items on two-line rows. */
+  .node { display: block; width: calc(var(--u) * .8); height: calc(var(--u) * .8); margin: calc(var(--u) * .38) auto 0; border-radius: 50%; background: var(--calendar-color); }
+  .event-time { display: flex; flex-direction: column; gap: calc(var(--u) * .15); color: var(--glass-muted); font-size: calc(var(--u) * 1.05); line-height: calc(var(--u) * 1.5625); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .range-start { font-weight: 400; }
+  .event-body { min-width: 0; width: calc(var(--u) * 20); max-width: 100%; }
+  .event h3 { font-size: calc(var(--u) * 1.25); font-weight: 400; line-height: 1.25; max-height: 2.5em; overflow: hidden; overflow-wrap: anywhere; letter-spacing: -.025em; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+  .one-line .event h3 { display: block; max-height: 1.25em; white-space: nowrap; text-overflow: ellipsis; }
+  .duration { color: var(--glass-muted); font-size: calc(var(--u) * .95); line-height: calc(var(--u) * 1.5625); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .more-events, .no-events { padding: calc(var(--u) * .6) 0; font-size: calc(var(--u) * .95); line-height: 1.25; color: var(--glass-muted); }
+  .sync-status { display: flex; align-items: center; gap: calc(var(--u) * .5); margin-top: calc(var(--u) * .6); padding-top: calc(var(--u) * .75); border-top: 1px solid var(--glass-line); color: var(--glass-muted); }
+  .sync-status > span { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: calc(var(--u) * 1); height: calc(var(--u) * 1); border: 1px solid currentColor; border-radius: 50%; font-size: calc(var(--u) * .7); }
+  .sync-status p { line-height: 1.25; }
+  .sync-status strong { display: block; font-size: calc(var(--u) * .8); font-weight: 600; }
+  .sync-status small { display: block; font-size: calc(var(--u) * .75); margin-top: calc(var(--u) * .15); }
+  #tasks { margin-top: calc(var(--u) * .8); border-top: 1px solid var(--glass-line); padding-top: calc(var(--u) * .5); line-height: 1.25; }
+  #tasks ul { display: flex; flex-wrap: wrap; gap: calc(var(--u) * .6); margin: calc(var(--u) * .4) 0 0; padding-left: calc(var(--u) * 1); font-size: calc(var(--u) * .85); }
+  #more-tasks { margin-top: calc(var(--u) * .4); font-size: calc(var(--u) * .85); color: var(--glass-muted); }
+  #more-tasks[hidden] { display: none; }
+  .weather-now { margin: calc(var(--u) * .4) 0 calc(var(--u) * 1); }
+  .current-reading { display: flex; align-items: center; gap: calc(var(--u) * .8); }
+  .condition-glyph { width: calc(var(--u) * 3.3); height: calc(var(--u) * 3.3); }
+  #temperature { font-size: calc(var(--u) * 3.7); line-height: 1.1; }
+  #weather { font-size: calc(var(--u) * 1.2); margin-top: calc(var(--u) * .3); color: var(--glass-muted); }
+  .weather-stats { display: flex; flex-wrap: wrap; column-gap: 4%; row-gap: calc(var(--u) * .7); margin: 0; padding-top: calc(var(--u) * .7); border-top: 1px solid var(--glass-line); }
+  .weather-stats > div { flex: 0 0 48%; width: 48%; }
+  dt { display: flex; align-items: center; gap: calc(var(--u) * .3); font-size: calc(var(--u) * 1.05); color: var(--glass-muted); }
+  dd { font-size: calc(var(--u) * 1.85); margin: calc(var(--u) * .15) 0 0; }
+  .weather-stats > .rain { flex-basis: 100%; width: 100%; }
+  #weather-rain-timing { font-size: calc(var(--u) * .85); line-height: 1.4; margin-top: calc(var(--u) * .3); color: var(--glass-muted); opacity: .85; }
+  #empty { padding: calc(var(--u) * 12) calc(var(--u) * 8); }
+  #empty h1 { font-size: calc(var(--u) * 5); }
+  #empty p { font-size: calc(var(--u) * 1.4); color: var(--glass-muted); margin-top: calc(var(--u) * 1); }
+</style>

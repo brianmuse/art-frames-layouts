@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "id": "clock",
+  "name": "Clock",
+  "entry": "index.html",
+  "network": "none",
+  "memory_mb": 256,
+  "artwork": true,
+  "settings": [
+    { "key": "theme", "label": "Theme", "type": "choice", "default": "Light", "choices": ["Light", "Dark"] },
+    { "key": "show_seconds", "label": "Show seconds", "type": "checkbox", "default": false },
+    { "key": "start", "label": "Start", "type": "time", "default": "07:00" },
+    { "key": "api_key", "label": "API key", "type": "secret" },
+    {
+      "key": "feeds", "label": "Feeds", "type": "list", "max_items": 4,
+      "fields": [
+        { "key": "url", "label": "Link", "type": "secret" },
+        { "key": "color", "label": "Color", "type": "color", "default": "#336699" }
+      ],
+      "legacy_items": [{ "id": "old", "values": { "color": "#112233" }, "copy_from": { "url": "old_url" } }]
+    }
+  ]
+}

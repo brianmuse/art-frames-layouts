@@ -1,0 +1,12 @@
+{
+  "name": "art-frames-layouts",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "dev": "npm --prefix layouts/morning run dev",
+    "build": "npm --prefix layouts/morning run build",
+    "test": "npm --prefix layouts/morning test",
+    "validate": "node scripts/validate-catalog.mjs",
+    "test:scripts": "node --test scripts/*.test.mjs"
+  }
+}

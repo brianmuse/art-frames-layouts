@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "default": "missing",
+  "layouts": [{ "id": "broken", "name": "Broken", "path": "layouts/broken" }]
+}

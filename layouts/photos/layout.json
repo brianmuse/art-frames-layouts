@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "id": "photos",
+  "name": "Photos",
+  "description": "Photos from a Google Photos shared album, one per screen update. Reading shared albums is unofficial: Google can change the album page at any time.",
+  "entry": "index.html",
+  "network": "bridge",
+  "memory_mb": 384,
+  "artwork": false,
+  "settings": [
+    {
+      "key": "album_url",
+      "label": "Shared album link",
+      "type": "secret",
+      "description": "In Google Photos, open the album, choose Share, and copy the link. It looks like https://photos.app.goo.gl/… or https://photos.google.com/share/…?key=…. Anyone with this link can see the album, so it is stored as a secret. Large albums: only the first batch of photos on the album page is used."
+    },
+    {
+      "key": "photo_interval",
+      "label": "Change photo every",
+      "type": "choice",
+      "default": "15 minutes",
+      "choices": [
+        "5 minutes",
+        "15 minutes",
+        "30 minutes",
+        "60 minutes",
+        "Once a day"
+      ],
+      "description": "A TV keeps its photo until the next change. Once a day changes at local midnight. Art Frames updates the TV image on its own schedule, so a change can show a little later."
+    },
+    {
+      "key": "sync_interval",
+      "label": "Check the album for new photos",
+      "type": "choice",
+      "default": "Every 3 hours",
+      "choices": [
+        "Every hour",
+        "Every 3 hours",
+        "Every 6 hours"
+      ],
+      "description": "The layout reads the album in the background. Screen updates use the saved photos."
+    },
+    {
+      "key": "order",
+      "label": "Photo order",
+      "type": "choice",
+      "default": "Shuffle",
+      "choices": [
+        "Shuffle",
+        "Newest first"
+      ],
+      "description": "Shuffle shows every photo once, in random order, before any photo repeats. Newest first goes from the most recent date taken to the oldest, then starts again."
+    },
+    {
+      "key": "fit",
+      "label": "Photo fit",
+      "type": "choice",
+      "default": "contain",
+      "choices": [
+        "contain",
+        "cover"
+      ],
+      "description": "Contain shows the whole photo over a blurred, darkened copy of itself. Cover fills the screen and crops the edges."
+    }
+  ],
+  "display_settings": [
+    {
+      "key": "show_caption",
+      "type": "boolean",
+      "default": true,
+      "label": "Show the date taken",
+      "description": "Show the date the photo was taken in a small label in the corner.",
+      "badge": "No date"
+    },
+    {
+      "key": "show_clock",
+      "type": "boolean",
+      "default": false,
+      "label": "Show the time",
+      "description": "Show the time of the screen update next to the date. The time changes only when the screen updates.",
+      "badge": "Clock on"
+    }
+  ]
+}

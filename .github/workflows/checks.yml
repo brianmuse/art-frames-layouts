@@ -1,0 +1,40 @@
+name: Checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  catalog:
+    runs-on: ubuntu-22.04
+    outputs:
+      layouts: ${{ steps.discover.outputs.layouts }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm run validate
+      - run: npm run test:scripts
+      # Each folder under layouts/ is one layout. The validator above fails if a
+      # folder is missing from catalog.json, so this list matches the catalog.
+      - id: discover
+        run: |
+          layouts=$(for dir in layouts/*/; do basename "$dir"; done | jq -Rsc 'split("\n") | map(select(length > 0))')
+          echo "layouts=$layouts" >> "$GITHUB_OUTPUT"
+
+  layout:
+    needs: catalog
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        layout: ${{ fromJSON(needs.catalog.outputs.layouts) }}
+    name: layout (${{ matrix.layout }})
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: layouts/${{ matrix.layout }}/package-lock.json
+      - run: npm --prefix "layouts/${{ matrix.layout }}" ci
+      - run: npm --prefix "layouts/${{ matrix.layout }}" test

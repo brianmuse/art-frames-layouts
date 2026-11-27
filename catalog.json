@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "default": "morning",
+  "layouts": [
+    {
+      "id": "morning",
+      "name": "Morning dashboard",
+      "path": "layouts/morning"
+    },
+    {
+      "id": "news",
+      "name": "News & weather",
+      "path": "layouts/news"
+    },
+    {
+      "id": "photos",
+      "name": "Photos",
+      "path": "layouts/photos"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "other",
+  "name": "Broken",
+  "entry": "../index.html",
+  "network": "host",
+  "memory_mb": 64,
+  "colour": "red",
+  "settings": [
+    { "key": "token", "label": "Token", "type": "secret", "default": "abc" },
+    { "key": "mode", "label": "Mode", "type": "choice", "default": "C", "choices": ["A", "B"] },
+    { "key": "csrf", "label": "CSRF", "type": "text" },
+    { "key": "items", "label": "Items", "type": "list", "fields": [{ "key": "id", "label": "ID", "type": "text" }] },
+    { "key": "mode", "label": "Again", "type": "slider" }
+  ]
+}

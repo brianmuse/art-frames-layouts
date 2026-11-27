@@ -1,0 +1,72 @@
+[
+  {
+    "time": "08:35 – 15:00",
+    "title": "School day",
+    "calendar": "Family",
+    "color": "lilac",
+    "past": false
+  },
+  {
+    "time": "09:00 – 09:15",
+    "title": "Team standup",
+    "calendar": "Work",
+    "color": "maroon",
+    "past": false
+  },
+  {
+    "time": "09:00 – 12:00",
+    "title": "School activities",
+    "calendar": "Family",
+    "color": "lilac",
+    "past": false
+  },
+  {
+    "time": "09:15 – 09:30",
+    "title": "Project check-in",
+    "calendar": "Work",
+    "color": "maroon",
+    "past": false
+  },
+  {
+    "time": "09:30 – 10:00",
+    "title": "Design review",
+    "calendar": "Work",
+    "color": "maroon",
+    "past": false
+  },
+  {
+    "time": "14:30 – 15:00",
+    "title": "Eye exam",
+    "calendar": "Family",
+    "color": "lilac",
+    "past": false
+  },
+  {
+    "time": "15:00 – 16:00",
+    "title": "Focus time",
+    "calendar": "Work",
+    "color": "maroon",
+    "past": false
+  },
+  {
+    "time": "16:00 – 18:00",
+    "title": "Neighborhood event",
+    "calendar": "Family",
+    "color": "lilac",
+    "past": false
+  },
+  {
+    "time": "16:30 – 17:30",
+    "title": "Swim lessons",
+    "calendar": "Family",
+    "color": "lilac",
+    "past": false
+  },
+  {
+    "time": "17:00 – 17:50",
+    "title": "Commuting",
+    "calendar": "Work",
+    "color": "maroon",
+    "past": false
+  }
+]

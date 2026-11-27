@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "id": "morning",
+  "name": "Morning dashboard",
+  "description": "Your calendars and local weather over the day\u2019s selected artwork.",
+  "entry": "index.html",
+  "network": "bridge",
+  "memory_mb": 512,
+  "settings": [
+    {
+      "key": "city",
+      "label": "Weather location",
+      "type": "text",
+      "description": "City and state or country, for example Boston, MA. Leave blank to disable weather."
+    },
+    {
+      "key": "units",
+      "label": "Temperature units",
+      "type": "choice",
+      "default": "fahrenheit",
+      "choices": [
+        "fahrenheit",
+        "celsius"
+      ]
+    },
+    {
+      "key": "calendar_sync_at",
+      "label": "Daily calendar sync at",
+      "type": "time",
+      "default": "03:00",
+      "description": "Download and prepare calendars at this local time, independently of screen refresh. A new installation syncs immediately."
+    },
+    {
+      "key": "calendar_timezone",
+      "label": "Calendar timezone",
+      "type": "text",
+      "default": "",
+      "description": "Leave blank to follow the Art Frames timezone. Enter an IANA name, for example America/New_York, to use a different one for the daily sync and calendar display."
+    },
+    {
+      "key": "calendar_refresh",
+      "label": "Download calendars",
+      "type": "choice",
+      "default": "Daily",
+      "choices": [
+        "Daily",
+        "Hourly",
+        "Every 15 minutes"
+      ],
+      "description": "Daily sync runs at the time above. Screen renders reuse saved data. Calendar edits after a download appear at the next sync; restarting the layout reuses today\u2019s saved export."
+    },
+    {
+      "key": "calendar_timeout",
+      "label": "Calendar download timeout",
+      "type": "choice",
+      "default": "90 seconds",
+      "choices": [
+        "30 seconds",
+        "90 seconds",
+        "180 seconds"
+      ],
+      "description": "Downloads run in the background. The screen can render saved calendar data while a slow feed updates."
+    },
+    {
+      "key": "calendars",
+      "label": "Calendars",
+      "type": "list",
+      "item_label": "Calendar",
+      "max_items": 8,
+      "description": "Add the Google calendars you want to combine. Each private iCal link is stored securely with this layout. Remove a calendar to stop including it.",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Title (optional)",
+          "type": "text",
+          "description": "Leave blank to use the name from the iCal feed."
+        },
+        {
+          "key": "url",
+          "label": "Private iCal link",
+          "type": "secret",
+          "description": "Google Calendar \u2192 Settings \u2192 Integrate calendar \u2192 Secret address in iCal format. Leave blank after saving to keep the existing link."
+        },
+        {
+          "key": "color",
+          "label": "Color",
+          "type": "color",
+          "default": "#af2842"
+        }
+      ],
+      "legacy_items": [
+        {
+          "id": "legacy-work",
+          "values": {
+            "title": "Work",
+            "color": "#af2842"
+          },
+          "copy_from": {
+            "url": "work_calendar_url"
+          }
+        },
+        {
+          "id": "legacy-family",
+          "values": {
+            "title": "Family",
+            "color": "#8850a8"
+          },
+          "copy_from": {
+            "url": "family_calendar_url"
+          }
+        }
+      ]
+    }
+  ],
+  "artwork": true
+}

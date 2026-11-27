@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "id": "news",
+  "name": "News & weather",
+  "description": "Today’s date, local weather and a few top headlines from Google News over the day’s selected artwork. This Astro layout owns its Google News RSS and Open-Meteo integration.",
+  "entry": "index.html",
+  "network": "bridge",
+  "memory_mb": 384,
+  "artwork": true,
+  "settings": [
+    {
+      "key": "region",
+      "label": "News edition",
+      "type": "choice",
+      "default": "United States (English)",
+      "description": "The Google News country and language for headlines and topics.",
+      "choices": [
+        "United States (English)",
+        "United Kingdom (English)",
+        "Canada (English)",
+        "Canada (French)",
+        "Australia (English)",
+        "Ireland (English)",
+        "New Zealand (English)",
+        "India (English)",
+        "Germany (German)",
+        "France (French)",
+        "Spain (Spanish)",
+        "Mexico (Spanish)",
+        "Italy (Italian)",
+        "Netherlands (Dutch)",
+        "Brazil (Portuguese)"
+      ]
+    },
+    {
+      "key": "topics",
+      "label": "Topics",
+      "type": "list",
+      "item_label": "Topic",
+      "max_items": 6,
+      "description": "Choose up to six topics. Their headlines merge into one list, taking turns. With no topics, the screen shows top stories.",
+      "fields": [
+        {
+          "key": "topic",
+          "label": "Topic",
+          "type": "choice",
+          "default": "Top stories",
+          "choices": [
+            "Top stories",
+            "World",
+            "Nation",
+            "Business",
+            "Technology",
+            "Entertainment",
+            "Science",
+            "Sports",
+            "Health"
+          ]
+        },
+        {
+          "key": "query",
+          "label": "Search (optional)",
+          "type": "text",
+          "description": "Enter words to follow, for example Red Sox. When this has text, the row shows search results and ignores the topic above."
+        }
+      ]
+    },
+    {
+      "key": "headline_count",
+      "label": "Headlines to show",
+      "type": "choice",
+      "default": "6",
+      "choices": [
+        "5",
+        "6",
+        "7",
+        "8"
+      ]
+    },
+    {
+      "key": "city",
+      "label": "Weather location",
+      "type": "text",
+      "description": "City and state or country, for example Boston, MA. Leave blank to hide the weather."
+    },
+    {
+      "key": "units",
+      "label": "Temperature units",
+      "type": "choice",
+      "default": "fahrenheit",
+      "choices": [
+        "fahrenheit",
+        "celsius"
+      ]
+    }
+  ],
+  "display_settings": [
+    {
+      "key": "show_art",
+      "type": "boolean",
+      "default": true,
+      "label": "Show the artwork behind the news",
+      "description": "Turn this off to show the news and weather on a plain dark background on this TV.",
+      "badge": "Art off"
+    }
+  ]
+}

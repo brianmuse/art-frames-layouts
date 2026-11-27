@@ -1,0 +1,52 @@
+---
+// One photo frame. Everything is rendered here: the static renderer runs no JavaScript.
+const view = Astro.locals.view || { box: { x: 0, y: 0, width: 3840, height: 2160, frame: { width: 3840, height: 2160 } }, message: 'Loading…' };
+const { box } = view;
+const percent = (value: number, total: number) => `${(value / total * 100).toFixed(4)}%`;
+const area = `left:${percent(box.x, box.frame.width)};top:${percent(box.y, box.frame.height)};width:${percent(box.width, box.frame.width)};height:${percent(box.height, box.frame.height)}`;
+const label = [view.caption, view.clock].filter(Boolean);
+// Contain: centre the whole photo in the box. Cover photos are already cut to the box shape.
+let placement = 'left:0;top:0;width:100%;height:100%';
+if (view.photo && view.photo.fit === 'contain') {
+  const scale = Math.min(box.width / view.photo.width, box.height / view.photo.height);
+  const width = view.photo.width * scale, height = view.photo.height * scale;
+  placement = `left:${percent((box.width - width) / 2, box.width)};top:${percent((box.height - height) / 2, box.height)};width:${percent(width, box.width)};height:${percent(height, box.height)}`;
+}
+---
+<!doctype html>
+<html lang="en" data-dayframe-ready="true">
+  <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Photos</title></head>
+  <body>
+    <div id="screen">
+      <div id="area" style={area}>
+        {view.photo?.backdrop && <img id="backdrop" src={view.photo.backdrop} alt="" />}
+        {view.photo && <img id="photo" src={view.photo.src} alt="" style={placement} />}
+        {view.message && <div id="message"><p class="eyebrow">Photos</p><p>{view.message}</p></div>}
+        {(label.length > 0 || view.notice) && <div id="label">
+          {label.length > 0 && <p class="when">{label.map((text: string, index: number) => <span class:list={{ clock: index > 0 || !view.caption }}>{text}</span>)}</p>}
+          {view.notice && <p class="notice">{view.notice}</p>}
+        </div>}
+      </div>
+    </div>
+  </body>
+</html>
+<style is:global>
+  @font-face { font-family: Inter; src: url('/fonts/Inter-Regular.ttf'); font-weight: 400; }
+  @font-face { font-family: Inter; src: url('/fonts/Inter-SemiBold.ttf'); font-weight: 600; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+  body { --u: min(1vw, calc(1vh * 16 / 9)); background: #0f1112; color: #f3f1ec; font-family: Inter, system-ui, sans-serif; display: grid; place-items: center; }
+  #screen { position: relative; width: calc(var(--u) * 100); height: calc(var(--u) * 56.25); overflow: hidden; background: #0f1112; }
+  #area { position: absolute; overflow: hidden; }
+  #photo, #backdrop { position: absolute; display: block; }
+  #backdrop { left: 0; top: 0; width: 100%; height: 100%; }
+  #message { position: absolute; left: 8%; right: 8%; top: 50%; margin-top: calc(var(--u) * -3); }
+  #message p { margin: 0; font-size: calc(var(--u) * 2); line-height: 1.3; letter-spacing: -.02em; }
+  #message .eyebrow { font-size: calc(var(--u) * .9); font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #a9b0ad; margin-bottom: calc(var(--u) * .8); }
+  #label { position: absolute; right: calc(var(--u) * 2); bottom: calc(var(--u) * 1.8); text-align: right; }
+  #label p { margin: 0; }
+  .when { display: inline-block; padding: calc(var(--u) * .4) calc(var(--u) * .85); border-radius: calc(var(--u) * .5); background: rgba(12, 14, 15, .46); font-size: calc(var(--u) * 1.05); line-height: 1.25; letter-spacing: -.01em; color: #f6f4ef; white-space: nowrap; }
+  .when .clock { font-weight: 600; }
+  .when span + span { margin-left: calc(var(--u) * .7); padding-left: calc(var(--u) * .7); border-left: 1px solid rgba(246, 244, 239, .4); }
+  .notice { margin-top: calc(var(--u) * .5) !important; display: inline-block; padding: calc(var(--u) * .35) calc(var(--u) * .75); border-radius: calc(var(--u) * .45); background: rgba(12, 14, 15, .6); font-size: calc(var(--u) * .8); color: #e8d7b0; }
+</style>

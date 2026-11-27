@@ -1,0 +1,12 @@
+*
+!src/
+!src/**
+!public/
+!public/**
+!server/
+!server/**
+!server.mjs
+!package.json
+!package-lock.json
+!astro.config.mjs
+!tsconfig.json

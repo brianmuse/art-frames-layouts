@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "now": "2026-10-26T08:00:00-04:00",
+  "timezone": "America/New_York",
+  "display": {
+    "width": 3840,
+    "height": 2160
+  },
+  "data": {
+    "headline": "A little room\nfor your day."
+  },
+  "art": {
+    "title": "Water Lilies (Agapanthus)",
+    "artist": "Claude Monet",
+    "year": "c. 1915\u201326",
+    "rights": "Public domain \u00b7 Cleveland Museum of Art (CC0) \u00b7 development sample",
+    "source_url": "https://www.clevelandart.org/art/1960.81",
+    "image": "/dayframe-art.jpg"
+  },
+  "planner": {
+    "active": true,
+    "plan": {
+      "date": "2026-10-26",
+      "today": [
+        {
+          "time": "09:00 \u2013 09:30",
+          "title": "Team standup",
+          "calendar": "Work",
+          "color": "maroon",
+          "past": false
+        },
+        {
+          "time": "12:00 \u2013 13:00",
+          "title": "Lunch with Alex",
+          "calendar": "Family",
+          "color": "lilac",
+          "past": false
+        },
+        {
+          "time": "16:00 \u2013 16:30",
+          "title": "School pickup",
+          "calendar": "Family",
+          "color": "lilac",
+          "past": false
+        }
+      ],
+      "tomorrow": [
+        {
+          "time": "10:00",
+          "title": "Brunch with family",
+          "calendar": "Family",
+          "color": "lilac",
+          "past": false
+        }
+      ],
+      "todos": [],
+      "weather": {
+        "current": 62,
+        "high": 69,
+        "low": 54,
+        "unit": "F",
+        "label": "Partly cloudy",
+        "humidity": 68,
+        "sunset": "18:03",
+        "rain_probability": 60,
+        "rain_peak_time": "15:00",
+        "rain_peak_probability": 60,
+        "rain_windows": [
+          {
+            "start": "14:00",
+            "end": "17:00"
+          }
+        ]
+      },
+      "errors": [],
+      "calendar_days": [
+        {
+          "date": "2026-10-26",
+          "label": "Monday",
+          "events": [
+            {
+              "time": "09:00 \u2013 09:30",
+              "title": "Team standup",
+              "calendar": "Work",
+              "color": "maroon",
+              "past": false
+            },
+            {
+              "time": "12:00 \u2013 13:00",
+              "title": "Lunch with Alex",
+              "calendar": "Family",
+              "color": "lilac",
+              "past": false
+            },
+            {
+              "time": "16:00 \u2013 16:30",
+              "title": "School pickup",
+              "calendar": "Family",
+              "color": "lilac",
+              "past": false
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
