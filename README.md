@@ -29,6 +29,12 @@ Then open `http://127.0.0.1:4321/?data=sample`. Each layout section below lists 
 
 Art Frames owns TV access, capture, refresh/wake and optional artwork context. Layouts own their integrations, content schedule, page design and settings definitions. A site with no weather has no weather dependency.
 
+## Contributing
+
+**Share your layouts.** Did you build a layout that other households could use? Send it here, and every Art Frames install gets it. Open a **New layout proposal** issue first, then follow [CONTRIBUTING.md](CONTRIBUTING.md). It lists what makes a good shared layout, the steps and the checks. Fixes to the existing layouts are welcome too.
+
+Report problems with Art Frames itself in [art-frames](https://github.com/brianmuse/art-frames/issues).
+
 ## Write a layout
 
 A layout is a trusted HTTP server in a container. Art Frames sends it a JSON snapshot. The layout returns one complete HTML page. Art Frames renders that page to a 3840×2160 JPEG and sends it to the TV.

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security problem
+    url: https://github.com/brianmuse/art-frames-layouts/security/advisories/new
+    about: Report a vulnerability privately. Do not open a public issue.
+  - name: A problem with Art Frames itself
+    url: https://github.com/brianmuse/art-frames/issues/new/choose
+    about: TV control, setup, the management pages and installing are part of Art Frames. Report those there.

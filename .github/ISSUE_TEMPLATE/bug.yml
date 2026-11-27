@@ -1,0 +1,41 @@
+name: Layout bug report
+description: A layout shows the wrong thing, fails to render or breaks a setting
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Remove calendar links, album links, API keys, addresses and IP addresses from everything you paste here.
+        To report a security problem, do not use this form. Use the Security tab of this repository.
+  - type: dropdown
+    id: layout
+    attributes:
+      label: Layout
+      options:
+        - morning
+        - news
+        - photos
+        - weather
+        - Other (name it below)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Art Frames version and layouts commit
+      description: The foot of the Art Frames sidebar shows the version. The Layouts page shows where each layout came from.
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead. A screenshot helps, if it shows no private data.
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log lines
+      description: Paste the layout's log lines around the problem. Remove private values first.
+      render: text

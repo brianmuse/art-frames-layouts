@@ -1,0 +1,44 @@
+name: New layout proposal
+description: Propose a new layout to share with every Art Frames household
+labels: [new layout]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for sharing a layout. Read CONTRIBUTING.md first: it lists what makes a good shared layout.
+        Agree on the plan here before you open a pull request.
+  - type: textarea
+    id: what
+    attributes:
+      label: What the layout shows
+      description: Describe the screen. A sketch or a screenshot with made-up data helps.
+    validations:
+      required: true
+  - type: textarea
+    id: who
+    attributes:
+      label: Who would use it
+      description: Why would many households want this layout?
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Data sources
+      description: Name each service the layout fetches from, whether it needs an account or key, and its terms or license. Write "None" if it needs no network.
+    validations:
+      required: true
+  - type: textarea
+    id: settings
+    attributes:
+      label: Settings
+      description: List the settings a user fills in. Mark the secret ones, such as API keys or private links.
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Checks
+      options:
+        - label: The layout has no analytics, ads or tracking.
+          required: true
+        - label: Any bundled fonts and images have a license that allows sharing.
+          required: true
